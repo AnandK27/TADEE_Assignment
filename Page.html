@@ -8,12 +8,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.7/js/tether.min.js" integrity="sha512-X7kCKQJMwapt5FCOl2+ilyuHJp+6ISxFTVrx+nkrhgplZozodT9taV2GuGHxBgKKpOJZ4je77OuPooJg9FJLvw==" crossorigin="anonymous"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.3.0/math.js" integrity="sha512-bd8Oth+p1rTn+/iUFHsSozuYn7JpmH59vMWe6L+M3huScB/SMTXWkQoME3Ytk0sbGJ40VGp2mO2b8K8FNrewfQ==" crossorigin="anonymous"></script>
   <title>JavaScript</title>
 </head>
 <body>
   <div class="jumbotron" style="padding: 15px; background-image: linear-gradient(to right, rgba(255,0,0,1), rgba(255,0,0,0));"><h1 style='color:snow'>TADEE Assignment</h1></div>
   <div class='container' style = 'padding: 10px'>
-  <form>
+  <form method = 'post' class='ajax'>
     <div class="mb-3 configuration">
       <label class='form-label'><strong>1. Type of Configuration</strong></label><br>
       <input type="radio" id="sym" name="config" value="sym">
@@ -42,72 +43,72 @@
 
     <div class="mb-3">
       <label for="numberOfSubCond" class="form-label"><strong>3. Number of Sub-Conductors per bundle</strong></label>
-      <input type="number" class="form-control" id="numberOfSubCond"  min="1" step='1'max="10">
+      <input type="number" class="form-control" id="numberOfSubCond"  min="1" step='1'max="10"  >
       <div id="SubCondLimit" class="form-text">Maximum of 10</div>
     </div>
 
     <div class='mb-3'>
       <label for="strandLength" class='form-label'><strong>4. Spacing between the strands:</strong></label><br>  
-      <input type="number" class="form-control" id="strandLength"  min="0" step='any' placeholder="in cm">
+      <input type="number" class="form-control" id="strandLength"  min="0" step='any' placeholder="in cm" >
       <div  class="form-text">Assume they are symmetrically distributed</div>
     </div>  
 
     <div class="mb-3">
       <label for="numberOfStrands" class="form-label"><strong>5. Number of Strands</strong></label>
-      <input type="number" class="form-control" id="numberOfStrands"  min="1" step='1'>
+      <input type="number" class="form-control" id="numberOfStrands"  min="1" step='1' >
     </div>
 
     <div class='mb-3'>
       <label for="strandDia" class='form-label'><strong>6. Diameter of each strand:</strong></label><br>  
-      <input type="number" class="form-control" id="strandDia"  min="0" step='any' placeholder="in mm">
+      <input type="number" class="form-control" id="strandDia"  min="0" step='any' placeholder="in mm" > 
     </div> 
 
     <div class='mb-3'>
       <label for="lineLength" class='form-label'><strong>7. Length of the line:</strong></label><br>  
-      <input type="number" class="form-control" id="lineLength"  min="0" step='any' placeholder="in km">
+      <input type="number" class="form-control" id="lineLength"  min="0" step='any' placeholder="in km" >
     </div> 
 
-    <div class="mb-3">
+    <div class="mb-3" id='modelSelection'>
       <label class='form-label'><strong>8. Model of the line</strong></label><br>
-      <input type="radio" id="short" name="model" value="short">
+      <input type="radio" id="short" name="model" value="short" checked='true'>
       <label for="sym" class='form-check-label'>Short</label><br>
       <input type="radio" id="nominal" name="model" value="nominal">
       <label for="nominal">Nominal Pi</label><br>
       <input type="radio" id="long" name="model" value="long">
       <label for="long">Long</label><br>
     </div>
-
+    
     <div class='mb-3'>
       <label for="rperKm" class='form-label'><strong>9. Resistance of line per Km:</strong></label><br>  
-      <input type="number" class="form-control" id="rperKm"  min="0" step='any' placeholder="in Ω">
+      <input type="number" class="form-control" id="rperKm"  min="0" step='any' placeholder="in Ω" >
     </div> 
 
     <div class='mb-3'>
       <label for="frequency" class='form-label'><strong>10. Power Frequency:</strong></label><br>  
-      <input type="number" class="form-control" id="frequency"  min="0" step='any' placeholder="in Hz">
+      <input type="number" class="form-control" id="frequency"  min="0" step='any' placeholder="in Hz" >
     </div> 
 
     <div class='mb-3'>
       <label for="rVoltage" class='form-label'><strong>11. Nominal System Voltage:</strong></label><br>  
-      <input type="number" class="form-control" id="rVoltage"  min="0" step='any' placeholder="in V">
+      <input type="number" class="form-control" id="rVoltage"  min="0" step='any' placeholder="in V" >
     </div> 
     
     <div class='mb-3'>
       <label for="rPower" class='form-label'><strong>12. Receiving end load in MW:</strong></label><br>  
-      <input type="number" class="form-control" id="rPower"  min="0" step='any' placeholder="in MW">
+      <input type="number" class="form-control" id="rPower"  min="0" step='any' placeholder="in MW" >
     </div> 
 
     <div class='mb-3'>
-      <label for="rPf" class='form-label'><strong>13. Power factor of receiving end:</strong></label><br>  
-      <input type="number" class="form-control" id="rPf"  min="-1" max='1' step='any'>
+      <label for="rPf" class='form-label'><strong>13. Power factor of receiving end (negative of lagging and positive for leading):</strong></label><br>  
+      <input type="number" class="form-control" id="rPf"  min="-1" max='1' step='any' placeholder="-1 to 1"  >
     </div> 
-    <button type="submit" class="btn btn-primary" id='submit'>Submit</button>
+    <button type="submit" class="btn btn-success" id='submit'>Submit</button>
+    <button type="reset" class="btn btn-secondary" id='reset'>Reset</button>
   </form>
 </div>
   <!-- <script>
     alert('hello, world');
   </script> -->
-  <script src="./Script/Math.js"></script>
   <script src="./Script/script.js"></script>
 </body>
 </html>
