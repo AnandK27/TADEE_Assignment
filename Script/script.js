@@ -60,33 +60,33 @@ $('form.ajax').on('submit',function(){
     inputs = data;
     inputs.model =model;
     inputs.config = config;
-    console.log(inputs);
+    var object = new mainObject(inputs);
+    object.inductancePerL();
+    console.log(object.LPerLength);
     return false
 });
 
 
 
-
-var mainClass = {
-    inputs,
-    radius : 3,
-    LPerLength: null,
-    CPerLength: null,
-    mgmd : 2.5,
-    LSgmd : 0.2,
-    CSgmd : 0.006,
-    inductancePerL(){
+function mainObject(inputs){
+    this.inputs = inputs;
+    this.radius = 3;
+    this.LPerLength = null;
+    this.CPerLength= null;
+    this.mgmd = 2.5;
+    this.LSgmd = 0.2;
+    this.CSgmd = 0.006;
+    this.inductancePerL = function(){
         var logVal = math.log(this.mgmd/this.LSgmd);
-        this.lPerLength=math.chain('2e-7').multiply(logVal);
-    },
+        this.LPerLength=math.chain('2e-7').multiply(logVal);
+        console.log('hi')
+    };
 
-    capacitancePerL(){
+    this.capcitancePerL = function(){
         var logVal = math.log(this.mgmd/this.CSgmd);
         this.CPerLength=math.chain('2').multiply(Math.PI).multiply('8.854e-12').divide(logVal);
     }
 
    
-}
+};
 
-mainClass.capacitancePerL();
-console.log(mainClass);
