@@ -87,6 +87,32 @@ function mainObject(inputs){
         this.CPerLength=math.chain('2').multiply(Math.PI).multiply('8.854e-12').divide(logVal);
     }
 
+    this.TotalResistance = function(){
+        this.resistance = math.multiply(this.inputs.rperKm).multiply(this.inputs.strandLength);
+        return this.resistance;
+    }
+
    
 };
+
+function abcdModel(inputs){   
+    this.model = inputs.model;
+    var object = new mainObject(inputs);
+    this.R = object.TotalResistance();
+    this.L = 
+    this.Z = 
+    this.Impedance = math.complex()
+    if (this.model == 1){
+        this.A = 1;
+        this.B = this.Impedance;
+        this.C = 0;
+        this.D = this.A;
+    }
+    
+    else if (this.model == 2){
+        this.A = 1 + math.chain('0.5').multiply(this.Y).multiply(this.Z);
+        this.B = this.Z + math.multiply('0.25').multiply(this.Y).multiply(this)
+    }
+
+}
 
