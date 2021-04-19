@@ -82,6 +82,7 @@ function mainObject(){
     this.radius = this.inputs.radius;
     this.LPerLength = null;
     this.CPerLength= null;
+
     this.cReactance = null;
     this.lReactance = null;
     this.mgmd = null;
@@ -247,38 +248,5 @@ function mainObject(){
    
 };
 
-//Function to calculate the ABCD parameters of a Transmission Model as per the input.
-// function abcdModel(inputs){   
-//     this.model = inputs.model;
-//     var object = new mainObject(inputs);
-//     this.R = object.TotalResistance();
-//     this.C = object.TotalCapacitance();
-//     this.L = object.TotalInductance();
-//     this.Xc = math.divide(1,math.chain('2').multiply(math.PI).multiply(inputs.frequency).multiply(this.C));
-//     this.Xl = math.chain('2').multiply(math.PI).multiply(inputs.frequency).multiply(this.L);
-//     this.Zm = math.complex(this.R, this.Xl);
-//     this.Ym = math.complex(0,1/(this.Xc));
-//     this.gam = math.sqrt(math.multiply(this.Ym).multiply(this.Xl));
-//     this.zc = math.sqrt(math.divide(this.Zm,this.Ym));
-    
-//     if (this.model == 1){
-//         this.A = 1;
-//         this.B = this.Zm;
-//         this.C = 0;
-//         this.D = this.A;
-//     }
 
-//     else if (this.model == 2){
-//         this.A = math.multiply(1,math.chain('0.5').multiply(this.Ym).multiply(this.Zm));
-//         this.B = math.multiply(this.Zm, math.chain('0.25').multiply(this.Ym).multiply(this.Zm).multiply(this.Zm));
-//         this.C = Ym;
-//         this.D = this.A;
-//     }
-//     else if (this.model == 3){
-//         this.A = math.cosh(math.multiply(this.gam,inputs.strandLength));
-//         this.B = math.multiply(this.zc, math.sinh(this.gam,inputs.strandLength));
-//         this.C = math.multiply(1/this.zc,math.sinh(this.gam,inputs.strandLength));
-//         this.D = this.A;
-//     }
-// };
 
