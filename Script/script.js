@@ -62,8 +62,13 @@ $('form.ajax').on('submit',function(){
     inputs.config = config;
     var object = new mainObject(inputs);
     object.inductancePerL();
-    console.log(object.LPerLength);
-    return false
+    object.TotalInductance();
+    object.capcitancePerL();
+    object.TotalCapacitance();
+    object.TotalResistance();
+    object.abcdModel();
+    console.log(object.B);
+    return false;
 });
 
 
@@ -76,69 +81,60 @@ function mainObject(inputs){
     this.mgmd = 2.5;
     this.LSgmd = 0.2;
     this.CSgmd = 0.006;
+    this.omega = math.multiply('2',Math.PI,'50');
+
     this.inductancePerL = function(){
         var logVal = math.log(this.mgmd/this.LSgmd);
-        this.LPerLength=math.chain('2e-7').multiply(logVal);
-        console.log('hi');
-        return this.LPerLength;
+        this.LPerLength=math.multiply('2e-7',logVal);
     };
 
     this.capcitancePerL = function(){
         var logVal = math.log(this.mgmd/this.CSgmd);
-        this.CPerLength=math.chain('2').multiply(Math.PI).multiply('8.854e-12').divide(logVal);
-        return this.CPerLength;
-    }
+        this.CPerLength = math.divide(math.multiply('2',Math.PI,'8.854e-12'),logVal);
+    };
 
     this.TotalResistance = function(){
-        this.resistance = math.multiply(this.inputs.rperKm).multiply(inputs.strandLength);
-        return this.resistance;
-    } //Added a function Total Resistance.
+        this.resistance = math.multiply(this.inputs.rperKm,this.inputs.lineLength);
+    }; //Added a function Total Resistance.
 
     this.TotalInductance = function(){
-        this.inductance = math.multiply(this.capacitancePerL(),inputs.rperKm);
-        return this.inductance; 
-    } //Added a function Total Inductance
+        this.inductance = math.multiply(this.LPerLength,this.inputs.lineLength);
+        this.Xl = (this.omega*this.inductance);
+    }; //Added a function Total Inductance
 
     this.TotalCapacitance = function(){
-        this.capacitance = math.multiply(this.LPerLength,inputs.rperKm);
-        return this.capacitance;
-    } //Added a function Total Capacitance
+        this.capacitance =  math.multiply(this.CPerLength,this.inputs.lineLength);
+        this.Xc = 1 / (this.omega*this.capacitance);
+    }; //Added a function Total Capacitance
 
+    this.abcdModel = function(){
+        this.Zm = math.complex(this.resistance, this.Xl);
+        this.Ym = math.complex(0,this.Xc);
+        this.gam = math.sqrt(math.multiply(this.Ym,this.Xl));
+        this.zc = math.sqrt(math.divide(this.Zm,this.Ym));
+
+        if (this.inputs.model == 1){
+            this.A = 1;
+            this.B = this.Zm;
+            this.C = 0;
+            this.D = this.A;
+        }
+    
+        else if (this.inputs.model == 2){
+            this.A = math.add(1,math.multiply('0.5',this.Ym,this.Zm));
+            this.B = this.Zm;
+            this.C = math.add(this.Ym, math.multiply('0.25',this.Ym,this.Ym,this.Zm));
+            this.D = this.A;
+        }
+        else if (this.inputs.model == 3){
+            this.A = math.cosh(this.gam);
+            this.B = math.multiply(this.zc, math.sinh(this.gam));
+            this.C = math.multiply(1/this.zc,math.sinh(this.gam));
+            this.D = this.A;
+        }
+    }
    
 };
 
 //Function to calculate the ABCD parameters of a Transmission Model as per the input.
-function abcdModel(inputs){   
-    this.model = inputs.model;
-    var object = new mainObject(inputs);
-    this.R = object.TotalResistance();
-    this.C = object.TotalCapacitance();
-    this.L = object.TotalInductance();
-    this.Xc = math.divide(1,math.chain('2').multiply(math.PI).multiply(inputs.frequency).multiply(this.C));
-    this.Xl = math.chain('2').multiply(math.PI).multiply(inputs.frequency).multiply(this.L);
-    this.Zm = math.complex(this.R, this.Xl);
-    this.Ym = math.complex(0,1/(this.Xc));
-    this.gam = math.sqrt(math.multiply(this.Ym).multiply(this.Xl));
-    this.zc = math.sqrt(math.divide(this.Zm,this.Ym));
-    
-    if (this.model == 1){
-        this.A = 1;
-        this.B = this.Zm;
-        this.C = 0;
-        this.D = this.A;
-    }
-
-    else if (this.model == 2){
-        this.A = math.multiply(1,math.chain('0.5').multiply(this.Ym).multiply(this.Zm));
-        this.B = math.multiply(this.Zm, math.chain('0.25').multiply(this.Ym).multiply(this.Zm).multiply(this.Zm));
-        this.C = Ym;
-        this.D = this.A;
-    }
-    else if (this.model == 3){
-        this.A = math.cosh(math.multiply(this.gam,inputs.strandLength));
-        this.B = math.multiply(this.zc, math.sinh(this.gam,inputs.strandLength));
-        this.C = math.multiply(1/this.zc,math.sinh(this.gam,inputs.strandLength));
-        this.D = this.A;
-    }
-};
 
