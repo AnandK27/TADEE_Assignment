@@ -12,6 +12,11 @@ var inputs = {
 form.addEventListener('reset', function(e){
     disb.childNodes[1].childNodes[1].disabled = false;
     disb.childNodes[3].childNodes[1].disabled = false;
+    location.href = '#top';
+    ans = document.getElementById('answers');
+    ans.style.display = 'none';
+    document.getElementById('sendGraph').innerHTML = '';
+    document.getElementById('recGraph').innerHTML = '';
 })
 
 configSym.addEventListener('click', function(e){
@@ -52,8 +57,7 @@ $('form.ajax').on('submit',function(){
             name = that.attr('id'),
             value = that.val();
         
-        data[name] = value;
-        
+        data[name] = value;  
     });
     var model = inputs.model;
     var config = inputs.config;
@@ -63,6 +67,7 @@ $('form.ajax').on('submit',function(){
     inputs.config = config;
     var object = new mainObject();
     console.log(inputs);
+    object.findDia();
     object.findMGMD();
     object.findSGMD();
     object.inductancePerL();
@@ -74,9 +79,42 @@ $('form.ajax').on('submit',function(){
     object.sendingParams();
     object.percVoltReg();
     object.efficiency();
+    object.powerLossCalc();
+    object.compensationCalc();
+    object.chargingCurrCalc();
+    object.sendingAndReceivingCentres();
+    placeAnswers(object);
     return false
 });
 
+
+function placeAnswers(object){
+    ans = document.getElementById('answers');
+    spanArr = ans.querySelectorAll('span');
+    spanArr[0].innerHTML = object.LPerLength;
+    spanArr[1].innerHTML = object.CPerLength;
+    spanArr[2].innerHTML = object.lReactance;
+    spanArr[3].innerHTML = object.cReactance;
+    spanArr[4].innerHTML = object.ic
+    spanArr[5].innerHTML = object.A
+    spanArr[6].innerHTML = object.B
+    spanArr[7].innerHTML = object.C
+    spanArr[8].innerHTML = object.D
+    spanArr[9].innerHTML = object.Vs
+    spanArr[10].innerHTML = object.Is
+    spanArr[11].innerHTML = object.perVoltReg*100
+    spanArr[12].innerHTML = object.powerLoss/1000000
+    spanArr[13].innerHTML = object.transEff
+
+    let graph1 = Desmos.GraphingCalculator(document.getElementById('sendGraph'),{keypad:false , expressions:false});
+    let graph2 = Desmos.GraphingCalculator(document.getElementById('recGraph'),{keypad:false, expressions:false});
+    let r = math.abs(object.Vs)*object.Vph/math.abs(object.B);
+    r/=Math.pow(10,6);
+    graph1.setExpression({ id: "graph1", latex: `(x-${object.Cs[0]/Math.pow(10,6)})^2+(y-${object.Cs[1]/Math.pow(10,6)})^2=${r*r}` });
+    graph2.setExpression({ id: "graph2", latex: `(x+${object.Cr[0]/Math.pow(10,6)})^2+(y+${object.Cr[1]/Math.pow(10,6)})^2=${r*r}` });
+    ans.style.display = 'block';
+    location.href = '#answers';
+}
 
 function stringSeparator(){
     let w = inputs.subCondDist;
@@ -93,10 +131,10 @@ function stringSeparator(){
 
 function mainObject(){
     this.inputs = inputs;
-    this.radius = this.inputs.radius;
+    this.radius = parseFloat(this.inputs.radius);
     this.LPerLength = null;
     this.CPerLength= null;
-
+    this.inputs.numberOfSubCond = 1;//parseFloat(this.inputs.numberOfSubCond);
     this.cReactance = null;
     this.lReactance = null;
     this.mgmd = null;
@@ -107,16 +145,16 @@ function mainObject(){
     this.B = null;
     this.C = null;
     this.D = null;
-    this.Vr = this.inputs.rVoltage;
+    this.Vr = 110000;//parseFloat(this.inputs.rVoltage);
     this.Ir = null;
     this.Vs = null;
     this.Is = null;
     this.Ps = null;
-    this.rPower = this.inputs.rPower;
-    this.rPF = this.inputs.rPf;
-    this.omega = 2*Math.PI*this.inputs.frequency;
+    this.rPower = 18*1000000;//parseFloat(this.inputs.rPower)*1000000;
+    this.rPF = parseFloat(this.inputs.rPf);
+    this.omega = 2*Math.PI*50;  //parseFloat(this.inputs.frequency);
     this.gamma = null;
-    this.transLength = this.inputs.lineLength;
+    this.transLength = 360*1000;//parseFloat(this.inputs.lineLength)*1000;
     this.perVoltReg = null;
     this.sendPower = null;
     this.transEff = null;
@@ -126,21 +164,34 @@ function mainObject(){
     console.log('rPower', this.rPower);
     console.log('rPF', this.rPF);
 
+    this.findDia = function(){
+        let m = (3+math.sqrt(12*this.inputs.numberOfStrands-3))/6; //number of layers
+        this.diameter = (2*m-1)*parseFloat(this.inputs.strandDia); //diameter of subconductor
+        this.diameter = 0.012;
+    }
+    
     this.findMGMD = function(){
         if(this.inputs.config){ //symm
-            this.mgmd = (math.cube(this.inputs.ABLength)) ^ (1/3);
-            
+            this.mgmd = parseFloat(this.inputs.ABLength);    
         } else { //non-symm
             //enada difference uh :( 
-            this.mgmd = (this.inputs.ABLength*this.inputs.BCLength*this.inputs.ACLength) ^ (1/3);
-            
+            this.mgmd = Math.cbrt(parseFloat(this.inputs.ABLength)*parseFloat(this.inputs.BCLength)*parseFloat(this.inputs.ACLength));   
         }
         console.log('mgmd', this.mgmd);
     };
 
     this.findSGMD = function(){
-        this.LSgmd = 4
-        this.CSgmd = 5
+        this.radius = this.diameter/2
+        product = 1;
+        this.inputs.subCondDistVal.forEach(function(x){
+            product *= x;
+        })
+        console.log(product)
+        product = Math.pow(product,2)
+        product*=Math.pow(this.radius,this.inputs.numberOfSubCond)
+        this.CSgmd = Math.pow(product,1/(this.inputs.numberOfSubCond*this.inputs.numberOfSubCond));
+        product*=Math.pow(0.7788,this.inputs.numberOfSubCond);
+        this.LSgmd = Math.pow(product,1/(this.inputs.numberOfSubCond*this.inputs.numberOfSubCond));
         console.log('lsgmd', this.LSgmd);
         console.log('csgmd', this.CSgmd);
     };
@@ -148,13 +199,13 @@ function mainObject(){
     this.inductancePerL = function(){
         var logVal = math.log(this.mgmd/this.LSgmd);
         this.LPerLength = 2e-7*(logVal);
-        console.log('inductancePerL',this.LPerLength);
+        console.log('inductancePerL',this.LPerLength*1000);
     };
 
     this.capcitancePerL = function(){
         var logVal = math.log(this.mgmd/this.CSgmd);
         this.CPerLength = (2*Math.PI*8.854e-12) / logVal;
-        console.log('capcitancePerL', this.CPerLength);
+        console.log('capcitancePerL', this.CPerLength*1000);
     };
 
     this.capReactance = function(){
@@ -170,7 +221,7 @@ function mainObject(){
     };
 
     this.TotalResistance = function(){
-        var R = this.inputs.rperKm*this.transLength;
+        var R = 0.2*this.transLength/1000//parseFloat(this.inputs.rperKm)*this.transLength/1000;
         this.totalResistance = R;
         console.log('TotalResistance', this.totalResistance)
     };
@@ -181,7 +232,7 @@ function mainObject(){
         var Xl = this.lReactance;
         var Zm = math.complex(R, Xl);
         var Ym = math.complex(0, 1/Xc);
-        var gamma = math.sqrt(math.multiply(Ym, Xl));
+        var gamma = math.sqrt(math.multiply(Ym, Zm));
         var zc = math.sqrt(math.divide(Zm, Ym));
 
         if (this.inputs.model == 1){
@@ -198,12 +249,12 @@ function mainObject(){
             this.D = this.A;
         }
         else if (this.inputs.model == 3){
-            this.A = math.cosh(math.multiply(gamma, this.transLength));
-            this.B = math.multiply(zc, math.sinh(math.multiply(gamma, this.transLength)));
-            this.C = math.divide(this.B, math.multiply(Zm, Zm));
+            this.A = math.cosh(gamma);
+            this.B = math.multiply(zc, math.sinh(gamma));
+            this.C = math.divide(math.sinh(gamma),zc);
             this.D = this.A;
         }
-        console.log('A', math.re(this.A));
+        console.log('A', this.A);
         console.log('B',this.B);
         console.log('C', this.C);
         console.log('D', this.D);
@@ -212,21 +263,35 @@ function mainObject(){
     this.sendingParams = function(){
         var vr = this.Vr;
         var rpower = this.rPower;
-        var Vph = math.divide(vr, (math.sqrt(3)));
-        this.Ir = math.divide(rpower, math.multiply(3, math.multiply(Vph, this.rPF)));
+        console.log(this.rPF);
+        this.Vph = math.divide(vr, (math.sqrt(3)));
+        this.Irmag = math.abs(math.divide(rpower, math.multiply(3,this.Vph, this.rPF)));
+        if(this.rPF >= 0){
+            this.Irang = math.acos(this.rPF)
+        }
+        else{
+            this.Irang = -math.acos(this.rPF)
+        }
+       
+        this.Ir = math.complex({r:this.Irmag,phi:this.Irang})
 
-        this.Vs = math.add(math.multiply(this.A, this.Vr) , math.multiply(this.B, this.Ir));
-        this.Is = math.add(math.multiply(this.C, this.Vr) , math.multiply(this.D, this.Ir));
+        this.Vs = math.add(math.multiply(this.A, this.Vph) , math.multiply(this.B, this.Ir));
+        this.Is = math.add(math.multiply(this.C, this.Vph) , math.multiply(this.D, this.Ir));
 
         console.log('Vr', vr);
-        console.log('Vph', Vph);
+        console.log('Vph', this.Vph);
         console.log('Ir', this.Ir);
         console.log('Vs', this.Vs);
         console.log('Is', this.Is);
     };
 
-    this.circleSending = function(){//desmos api
-        
+    this.sendingAndReceivingCentres = function(){
+        this.Cs = []
+        this.Cr = []//desmos api
+        this.Cs.push((math.abs(this.D)*Math.pow(math.abs(this.Vs),2)*math.cos(math.atan(this.B.im/this.B.re)))/math.abs(this.B))
+        this.Cs.push((math.abs(this.D)*Math.pow(math.abs(this.Vs),2)*math.sin(math.atan(this.B.im/this.B.re)))/math.abs(this.B))
+        this.Cr.push((math.abs(this.A)*Math.pow(this.Vph,2)*math.cos(math.atan(this.B.im/this.B.re)))/math.abs(this.B))
+        this.Cr.push((math.abs(this.A)*Math.pow(this.Vph,2)*math.sin(math.atan(this.B.im/this.B.re)))/math.abs(this.B))
     };
 
     this.percVoltReg = function(){
@@ -241,26 +306,50 @@ function mainObject(){
     };
 
     this.efficiency = function(){
-        var Vs_phase = (math.atan2(math.im(this.Vs), math.re(this.Vs)) * 180) / Math.PI;
-        var Is_phase = (math.atan2(math.im(this.Is), math.re(this.Is)) * 180) / Math.PI;
-        console.log('Vs_phase', Vs_phase);
-        console.log('Is_phase', Is_phase);
-        
-        var magVs = math.sqrt(math.add(math.multiply(math.re(this.Vs), math.re(this.Vs)), math.multiply(math.im(this.Vs), math.im(this.Vs))));
-        var magIs = math.sqrt(math.add(math.multiply(math.re(this.Is), math.re(this.Is)), math.multiply(math.im(this.Is), math.im(this.Is))));
-        var sendPhase = Vs_phase - Is_phase;
-        this.sendPower = 3*magVs*magIs*math.cos(sendPhase);
+        this.sendPower = 3*math.abs(this.Vs)*math.abs(this.Is)*math.cos(math.atan(this.Vs.im/this.Vs.re)-math.atan(this.Is.im/this.Is.re));
         console.log('sendPower', this.sendPower);
 
         this.transEff = (this.rPower / this.sendPower) * 100;
         console.log('transEff', this.transEff);
     };
 
-    this.powerLoss = function(){
-
+    this.powerLossCalc = function(){
+        this.powerLoss = (this.sendPower-this.rPower);
     };
+
+    this.chargingCurrCalc = function(){
+        if(this.inputs.model==1){
+            this.Ic = 0;
+        }
+        else if(this.inputs.model==2){
+            this.Ic = math.abs(this.Vs)/(2*this.Xc)
+        }
+        else{
+            this.Ic = 0;
+        }
+    }
+
+    this.compensationCalc = function(){
+        if(this.inputs.model==1){
+        let c1 = (math.abs(this.A)*Math.pow(this.Vph,2)*math.cos(math.atan(this.B.im/this.B.re)))/math.abs(this.B)
+        let c2 = (math.abs(this.A)*Math.pow(this.Vph,2)*math.sin(math.atan(this.B.im/this.B.re)))/math.abs(this.B)
+        let r = math.multiply(this.Vph,this.Vph)/math.abs(this.B);
+        r/=Math.pow(10,6)
+        this.Qr=math.sqrt(Math.pow(r,2)-Math.pow((this.rPower/(3*Math.pow(10,6))+c1/Math.pow(10,6)),2)) - c2/Math.pow(10,6);
+        this.Q = math.tan(math.acos(this.rPF))*this.rPower/(Math.pow(10,6))/3;
+        this.compensation = this.Q-this.Qr;
+        }
+    }
    
 };
 
+function printPdf() {
+    ans = document.getElementById('answers');
+    html2pdf(ans, { 
+        filename:     'TADEE.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 1, logging: true, dpi: 192, letterRendering: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }});
+  }
 
 
