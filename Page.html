@@ -49,7 +49,7 @@
 
     <div class='mb-3'>
       <label for="subCondDist" class='form-label'><strong>4. Spacing between the sub-conductors:</strong></label><br>  
-      <input type="text" class="form-control" id="subCondDist"  min="0" step='any' placeholder="in cm" >
+      <textarea type="text" class="form-control" id="subCondDist"  min="0" step='any' placeholder="in cm" ></textarea>
       <div  class="form-text">Enter the <sup>N</sup>C<sub>2</sub>values where N is the number of subconductors separated by comma(,)</div>
     </div>  
 
@@ -105,6 +105,33 @@
     <button type="submit" class="btn btn-success" id='submit'>Submit</button>
     <button type="reset" class="btn btn-secondary" id='reset'>Reset</button>
   </form>
+</div>
+
+<div class='container col-md-8 offset-md-2' style = 'padding: 10px; display: none' id='answers'>
+  <h1>Solutions:</h1>
+  <ol>
+    <li>Inductance per phase per Length : <span id='lPerLength'></span>H/km</li>
+    <li>Capacitance per phase per Length : <span id='cPerLength'></span>F/km</li>
+    <li>Inductive Reactance of the Line : <span id='xl'></span>Ω</li>
+    <li>Capacitive Reactance of the Line : <span id = 'xc'></span>Ω</li>
+    <li>Charging Current : <span id='ic'></span>A</li>
+    <li>ABCD Parameters :<br> 
+      A: <span id='A'></span><br> 
+      B: <span id='B'></span><br> 
+      C: <span id='C'></span><br> 
+      D: <span id='D'></span>
+    </li>
+    <li>Sending end Voltage : <span id='Vs'></span>kV</li>
+    <li>Sending end Current : <span id='Is'></span>A</li>
+    <li>Percentage Voltage Regulation : <span id='VRPercent'></span>%</li>
+    <li>Power Loss in Line : <span id='Ploss'></span>MW</li>
+    <li>Transmission Efficiency : <span id='Eff'></span>%</li>
+    <li>Sending end circle diagram : <br><span id='sendGraph'></span></li>
+    <li>Receiving end circle diagram : <br><span id='recGraph'></span></li>
+    <li style='display: none;'>Compensation Comment:  <span></span></li>
+    <li style='display: none;'>Compensation Requirement : <span></span>MVar</li> 
+  </ol>
+
 </div>
   <!-- <script>
     alert('hello, world');
