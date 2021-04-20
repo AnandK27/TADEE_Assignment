@@ -89,6 +89,8 @@ $('form.ajax').on('submit',function(){
 
 
 function placeAnswers(object){
+    document.getElementById('sendGraph').innerHTML = '';
+    document.getElementById('recGraph').innerHTML = '';
     ans = document.getElementById('answers');
     spanArr = ans.querySelectorAll('span');
     spanArr[0].innerHTML = object.LPerLength;
