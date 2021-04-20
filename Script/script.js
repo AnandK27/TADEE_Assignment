@@ -97,7 +97,7 @@ function placeAnswers(object){
     spanArr[1].innerHTML = object.CPerLength;
     spanArr[2].innerHTML = object.lReactance;
     spanArr[3].innerHTML = object.cReactance;
-    spanArr[4].innerHTML = object.ic
+    spanArr[4].innerHTML = object.Ic
     spanArr[5].innerHTML = object.A
     spanArr[6].innerHTML = object.B
     spanArr[7].innerHTML = object.C
