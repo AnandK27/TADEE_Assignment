@@ -1,0 +1,13 @@
+#answers {
+    border-radius: 1em;
+    margin-top: 5em;
+    margin-bottom: 5em;
+    padding-top: 0em;
+    box-shadow:0px 0px 50px 10px rgba(226, 92, 119, 0.315); 
+}
+
+#answers h1{
+    margin-right: 2em;
+    margin-left: 2em;
+    border-bottom: solid black;
+}
