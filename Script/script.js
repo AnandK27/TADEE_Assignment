@@ -58,9 +58,11 @@ $('form.ajax').on('submit',function(){
     var model = inputs.model;
     var config = inputs.config;
     inputs = data;
+    inputs.subCondDistVal = stringSeparator();
     inputs.model = model;
     inputs.config = config;
     var object = new mainObject();
+    console.log(inputs);
     object.findMGMD();
     object.findSGMD();
     object.inductancePerL();
@@ -75,6 +77,18 @@ $('form.ajax').on('submit',function(){
     return false
 });
 
+
+function stringSeparator(){
+    let w = inputs.subCondDist;
+    s_w = w.split(',')
+    let i=0;
+    let s=[]
+    s_w.forEach(ele => {
+     s.push(parseFloat(ele)) 
+     i++  
+    });
+    return s;
+}
 
 
 function mainObject(){
