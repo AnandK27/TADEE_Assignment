@@ -337,7 +337,7 @@ function mainObject(){
             this.Ic = math.abs(this.Vs)/(2*this.Xc)
         }
         else{
-            this.Ic = this.C*this.Vph;
+            this.Ic = math.multiply(this.C,this.Vph);
         }
     }
 
