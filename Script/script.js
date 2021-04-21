@@ -15,6 +15,7 @@ form.addEventListener('reset', function(e){
     location.href = '#top';
     ans = document.getElementById('answers');
     ans.style.display = 'none';
+    document.getElementById('onlyForShort').style.display = 'none';
     document.getElementById('sendGraph').innerHTML = '';
     document.getElementById('recGraph').innerHTML = '';
 })
@@ -83,30 +84,47 @@ $('form.ajax').on('submit',function(){
     object.compensationCalc();
     object.chargingCurrCalc();
     object.sendingAndReceivingCentres();
+    console.log(object.Qr)
     placeAnswers(object);
     return false
 });
 
 
 function placeAnswers(object){
+    document.getElementById('onlyForShort').style.display = 'none';
     document.getElementById('sendGraph').innerHTML = '';
     document.getElementById('recGraph').innerHTML = '';
     ans = document.getElementById('answers');
     spanArr = ans.querySelectorAll('span');
-    spanArr[0].innerHTML = object.LPerLength;
-    spanArr[1].innerHTML = object.CPerLength;
-    spanArr[2].innerHTML = object.lReactance;
-    spanArr[3].innerHTML = object.cReactance;
-    spanArr[4].innerHTML = object.Ic
-    spanArr[5].innerHTML = object.A
-    spanArr[6].innerHTML = object.B
-    spanArr[7].innerHTML = object.C
-    spanArr[8].innerHTML = object.D
-    spanArr[9].innerHTML = object.Vs
-    spanArr[10].innerHTML = object.Is
-    spanArr[11].innerHTML = object.perVoltReg*100
-    spanArr[12].innerHTML = object.powerLoss/1000000
-    spanArr[13].innerHTML = object.transEff
+    switch(object.inputs.model){
+        case 1:
+            modelName = 'Short'
+            break;
+        case 2:
+            modelName = 'Medium'
+            break;
+        case 3:
+            modelName = 'Long'
+            break;
+    }
+    var d = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+    spanArr[0].innerHTML = modelName;
+    spanArr[1].innerHTML = d.toLocaleDateString(undefined,options);
+    spanArr[2].innerHTML = object.LPerLength;
+    spanArr[3].innerHTML = object.CPerLength;
+    spanArr[4].innerHTML = object.lReactance;
+    spanArr[5].innerHTML = object.cReactance;
+    spanArr[6].innerHTML = object.Ic
+    spanArr[7].innerHTML = object.A
+    spanArr[8].innerHTML = object.B
+    spanArr[9].innerHTML = object.C
+    spanArr[10].innerHTML = object.D
+    spanArr[11].innerHTML = object.Vs
+    spanArr[12].innerHTML = object.Is
+    spanArr[13].innerHTML = object.perVoltReg*100
+    spanArr[14].innerHTML = object.powerLoss/1000000
+    spanArr[15].innerHTML = object.transEff
 
     let graph1 = Desmos.GraphingCalculator(document.getElementById('sendGraph'),{keypad:false , expressions:false});
     let graph2 = Desmos.GraphingCalculator(document.getElementById('recGraph'),{keypad:false, expressions:false});
@@ -114,6 +132,14 @@ function placeAnswers(object){
     r/=Math.pow(10,6);
     graph1.setExpression({ id: "graph1", latex: `(x-${object.Cs[0]/Math.pow(10,6)})^2+(y-${object.Cs[1]/Math.pow(10,6)})^2=${r*r}` });
     graph2.setExpression({ id: "graph2", latex: `(x+${object.Cr[0]/Math.pow(10,6)})^2+(y+${object.Cr[1]/Math.pow(10,6)})^2=${r*r}` });
+    
+    
+    
+    if(object.inputs.model==1){
+        document.getElementById('onlyForShort').style.display = 'block';
+        spanArr[16].innerHTML = object.compensation
+    }
+
     ans.style.display = 'block';
     location.href = '#answers';
 }
@@ -307,7 +333,7 @@ function mainObject(){
             this.Ic = math.abs(this.Vs)/(2*this.Xc)
         }
         else{
-            this.Ic = this.C*this.Vr;
+            this.Ic = this.C*this.Vph;
         }
     }
 
@@ -316,8 +342,9 @@ function mainObject(){
         let c1 = (math.abs(this.A)*Math.pow(this.Vph,2)*math.cos(math.atan(this.B.im/this.B.re)))/math.abs(this.B)
         let c2 = (math.abs(this.A)*Math.pow(this.Vph,2)*math.sin(math.atan(this.B.im/this.B.re)))/math.abs(this.B)
         let r = math.multiply(this.Vph,this.Vph)/math.abs(this.B);
-        r/=Math.pow(10,6)
-        this.Qr=math.sqrt(Math.pow(r,2)-Math.pow((this.rPower/(3*Math.pow(10,6))+c1/Math.pow(10,6)),2)) - c2/Math.pow(10,6);
+        r/=math.pow(10,6)
+        console.log(r)
+        this.Qr= math.sqrt(Math.pow(r,2)-Math.pow((this.rPower/(3*Math.pow(10,6))+c1/Math.pow(10,6)),2)) - c2/Math.pow(10,6);
         this.Q = math.tan(math.acos(this.rPF))*this.rPower/(Math.pow(10,6))/3;
         this.compensation = this.Q-this.Qr;
         }

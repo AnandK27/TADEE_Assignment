@@ -12,3 +12,6 @@
     border-bottom: solid black;
 }
 
+#answers span{
+    font-weight: bold;
+}
