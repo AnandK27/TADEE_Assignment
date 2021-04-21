@@ -16,7 +16,7 @@
 </head>
 <body>
   <div id='top' class="jumbotron" style="padding: 15px; background-image: linear-gradient(to right, rgba(255,0,0,1), rgba(255,0,0,0));"><h1 style='color:snow'>TADEE Assignment</h1></div>
-  <div class='container col-md-8 offset-md-2' style = 'padding: 10px'>
+  <div class='container col-md-8 offset-md-2' style = 'padding: 10px; margin-bottom: 10px;'>
   <form method = 'post' class='ajax'>
     <div class="mb-3 configuration">
       <label class='form-label'><strong>1. Type of Configuration</strong></label><br>
@@ -29,7 +29,7 @@
     <div class='mb-3'>
     <strong>2. Let the position of the three phase conductor be A, B, and C. Enter the lengths between them:</strong><br><br>
     <div class='form-floating'>
-      <input type="number" class="form-control" id="ABLength"  min="0" step='any' placeholder="2e+1">
+      <input type="number" class="form-control" id="ABLength"  min="0" step='any' placeholder="2e+1" required>
       <label for="ABLength">Length of AB (in m)</label><br>
     </div>
     <div id='nonSym'>
@@ -46,29 +46,29 @@
 
     <div class="mb-3">
       <label for="numberOfSubCond" class="form-label"><strong>3. Number of Sub-Conductors per bundle</strong></label>
-      <input type="number" class="form-control" id="numberOfSubCond"  min="1" step='1'max="10"  >
+      <input type="number" class="form-control" id="numberOfSubCond"  min="1" step='1'max="10"  required>
       <div id="SubCondLimit" class="form-text">Maximum of 10</div>
     </div>
 
     <div class='mb-3'>
       <label for="subCondDist" class='form-label'><strong>4. Spacing between the sub-conductors:</strong></label><br>  
-      <textarea type="text" class="form-control" id="subCondDist"  min="0" step='any' placeholder="in cm" ></textarea>
+      <textarea type="text" class="form-control" id="subCondDist"  min="0" step='any' placeholder="in cm" required></textarea>
       <div  class="form-text">Enter the <sup>N</sup>C<sub>2</sub>values where N is the number of subconductors separated by comma(,)</div>
     </div>  
 
     <div class="mb-3">
       <label for="numberOfStrands" class="form-label"><strong>5. Number of Strands</strong></label>
-      <input type="number" class="form-control" id="numberOfStrands"  min="1" step='1' >
+      <input type="number" class="form-control" id="numberOfStrands"  min="1" step='1' required>
     </div>
 
     <div class='mb-3'>
       <label for="strandDia" class='form-label'><strong>6. Diameter of each strand:</strong></label><br>  
-      <input type="number" class="form-control" id="strandDia"  min="0" step='any' placeholder="in mm" > 
+      <input type="number" class="form-control" id="strandDia"  min="0" step='any' placeholder="in mm" required> 
     </div> 
 
     <div class='mb-3'>
       <label for="lineLength" class='form-label'><strong>7. Length of the line:</strong></label><br>  
-      <input type="number" class="form-control" id="lineLength"  min="0" step='any' placeholder="in km" >
+      <input type="number" class="form-control" id="lineLength"  min="0" step='any' placeholder="in km" required>
     </div> 
 
     <div class="mb-3" id='modelSelection'>
@@ -83,27 +83,27 @@
     
     <div class='mb-3'>
       <label for="rperKm" class='form-label'><strong>9. Resistance of line per Km:</strong></label><br>  
-      <input type="number" class="form-control" id="rperKm"  min="0" step='any' placeholder="in Ω" >
+      <input type="number" class="form-control" id="rperKm"  min="0" step='any' placeholder="in Ω" required>
     </div> 
 
     <div class='mb-3'>
       <label for="frequency" class='form-label'><strong>10. Power Frequency:</strong></label><br>  
-      <input type="number" class="form-control" id="frequency"  min="0" step='any' placeholder="in Hz" >
+      <input type="number" class="form-control" id="frequency"  min="0" step='any' placeholder="in Hz" required>
     </div> 
 
     <div class='mb-3'>
       <label for="rVoltage" class='form-label'><strong>11. Nominal System Voltage:</strong></label><br>  
-      <input type="number" class="form-control" id="rVoltage"  min="0" step='any' placeholder="in V" >
+      <input type="number" class="form-control" id="rVoltage"  min="0" step='any' placeholder="in V" required>
     </div> 
     
     <div class='mb-3'>
       <label for="rPower" class='form-label'><strong>12. Receiving end load in MW:</strong></label><br>  
-      <input type="number" class="form-control" id="rPower"  min="0" step='any' placeholder="in MW" >
+      <input type="number" class="form-control" id="rPower"  min="0" step='any' placeholder="in MW" required>
     </div> 
 
     <div class='mb-3'>
       <label for="rPf" class='form-label'><strong>13. Power factor of receiving end (negative of lagging and positive for leading):</strong></label><br>  
-      <input type="number" class="form-control" id="rPf"  min="-1" max='1' step='any' placeholder="-1 to 1"  >
+      <input type="number" class="form-control" id="rPf"  min="-1" max='1' step='any' placeholder="-1 to 1" required >
     </div> 
     <button type="submit" class="btn btn-success" id='submit'>Submit</button>
     <button type="reset" class="btn btn-secondary" id='reset'>Reset</button>
@@ -140,6 +140,7 @@
   <button class='btn btn-primary centre' id='printButton' onClick='printPdf()'>Print as PDF</button>
 </div>
 </div>
+<div class='container text-center'>Made by Anand, Gokulan, Lokesh</div>
   
   <script src="./Script/script.js"></script>
 </body>

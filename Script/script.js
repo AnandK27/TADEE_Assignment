@@ -134,32 +134,12 @@ function stringSeparator(){
 function mainObject(){
     this.inputs = inputs;
     this.radius = parseFloat(this.inputs.radius);
-    this.LPerLength = null;
-    this.CPerLength= null;
-    this.inputs.numberOfSubCond = 1;//parseFloat(this.inputs.numberOfSubCond);
-    this.cReactance = null;
-    this.lReactance = null;
-    this.mgmd = null;
-    this.LSgmd = null;
-    this.CSgmd = null;
-    this.totalResistance = null;
-    this.A = null;
-    this.B = null;
-    this.C = null;
-    this.D = null;
-    this.Vr = 110000;//parseFloat(this.inputs.rVoltage);
-    this.Ir = null;
-    this.Vs = null;
-    this.Is = null;
-    this.Ps = null;
-    this.rPower = 18*1000000;//parseFloat(this.inputs.rPower)*1000000;
+    this.inputs.numberOfSubCond = parseFloat(this.inputs.numberOfSubCond);
+    this.Vr = parseFloat(this.inputs.rVoltage);
+    this.rPower = parseFloat(this.inputs.rPower)*1000000;
     this.rPF = parseFloat(this.inputs.rPf);
-    this.omega = 2*Math.PI*50;  //parseFloat(this.inputs.frequency);
-    this.gamma = null;
-    this.transLength = 360*1000;//parseFloat(this.inputs.lineLength)*1000;
-    this.perVoltReg = null;
-    this.sendPower = null;
-    this.transEff = null;
+    this.omega = 2*Math.PI*parseFloat(this.inputs.frequency);
+    this.transLength = parseFloat(this.inputs.lineLength)*1000;
     console.log('omega', this.omega);
     console.log('length', this.transLength);
     console.log('Vr', this.Vr);
@@ -223,7 +203,7 @@ function mainObject(){
     };
 
     this.TotalResistance = function(){
-        var R = 0.2*this.transLength/1000//parseFloat(this.inputs.rperKm)*this.transLength/1000;
+        var R = parseFloat(this.inputs.rperKm)*this.transLength/1000;
         this.totalResistance = R;
         console.log('TotalResistance', this.totalResistance)
     };
@@ -327,7 +307,7 @@ function mainObject(){
             this.Ic = math.abs(this.Vs)/(2*this.Xc)
         }
         else{
-            this.Ic = 0;
+            this.Ic = this.C*this.Vr;
         }
     }
 
@@ -353,5 +333,3 @@ function printPdf() {
         html2canvas:  { scale: 1, logging: true, dpi: 192, letterRendering: true },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }});
   }
-
-
