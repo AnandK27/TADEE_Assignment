@@ -125,6 +125,7 @@ function placeAnswers(object){
     spanArr[13].innerHTML = object.perVoltReg*100
     spanArr[14].innerHTML = object.powerLoss/1000000
     spanArr[15].innerHTML = object.transEff
+    
 
     let graph1 = Desmos.GraphingCalculator(document.getElementById('sendGraph'),{keypad:false , expressionsCollapsed:true});
     let graph2 = Desmos.GraphingCalculator(document.getElementById('recGraph'),{keypad:false, expressionsCollapsed:true});
@@ -142,6 +143,12 @@ function placeAnswers(object){
     if(object.inputs.model==1){
         document.getElementById('onlyForShort').style.display = 'block';
         spanArr[16].innerHTML = object.compensation
+        if(object.compensation>0){
+            spanArr[17].innerHTML = "inductive";
+        }
+        else{
+            spanArr[17].innerHTML = "capacitive"
+        }
     }
 
     ans.style.display = 'block';
