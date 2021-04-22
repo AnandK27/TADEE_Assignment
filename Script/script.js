@@ -179,7 +179,6 @@ function mainObject(){
     this.findDia = function(){
         let m = (3+math.sqrt(12*this.inputs.numberOfStrands-3))/6; //number of layers
         this.diameter = (2*m-1)*parseFloat(this.inputs.strandDia); //diameter of subconductor
-        this.diameter = 0.012;
     }
     
     this.findMGMD = function(){
