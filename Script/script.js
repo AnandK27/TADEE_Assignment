@@ -120,8 +120,8 @@ function placeAnswers(object){
     spanArr[8].innerHTML = object.B
     spanArr[9].innerHTML = object.C
     spanArr[10].innerHTML = object.D
-    spanArr[11].innerHTML = object.Vs
-    spanArr[12].innerHTML = object.Is
+    spanArr[11].innerHTML = math.abs(object.Vs)
+    spanArr[12].innerHTML = math.abs(object.Is)
     spanArr[13].innerHTML = object.perVoltReg*100
     spanArr[14].innerHTML = object.powerLoss/1000000
     spanArr[15].innerHTML = object.transEff
@@ -167,7 +167,9 @@ function mainObject(){
     this.inputs.numberOfSubCond = parseFloat(this.inputs.numberOfSubCond);
     this.Vr = parseFloat(this.inputs.rVoltage);
     this.rPower = parseFloat(this.inputs.rPower)*1000000;
-    this.rPF = parseFloat(this.inputs.rPf);
+    this.recPF = parseFloat(this.inputs.rPf);
+    this.rPFsign = (this.recPF>=0)?1:-1;
+    this.rPF = math.abs(this.recPF);
     this.omega = 2*Math.PI*parseFloat(this.inputs.frequency);
     this.transLength = parseFloat(this.inputs.lineLength)*1000;
     console.log('omega', this.omega);
@@ -277,7 +279,7 @@ function mainObject(){
         console.log(this.rPF);
         this.Vph = math.divide(vr, (math.sqrt(3)));
         this.Irmag = math.abs(math.divide(rpower, math.multiply(3,this.Vph, this.rPF)));
-        if(this.rPF >= 0){
+        if(this.rPFsign>=0){
             this.Irang = math.acos(this.rPF)
         }
         else{
@@ -306,13 +308,13 @@ function mainObject(){
     };
 
     this.percVoltReg = function(){
-        var magA = math.sqrt(math.add(math.multiply(math.re(this.A), math.re(this.A)), math.multiply(math.im(this.A), math.im(this.A))));
-        var magVs = math.sqrt(math.add(math.multiply(math.re(this.Vs), math.re(this.Vs)), math.multiply(math.im(this.Vs), math.im(this.Vs))));
+        var magA = math.abs(this.A);
+        var magVs = math.abs(this.Vs);
         var Vr_fl = math.divide(this.Vr, (math.sqrt(3)));
         var Vr_nl = math.divide(magVs, magA);
         console.log('Vr_nl', Vr_nl);
 
-        this.perVoltReg = math.abs(math.divide(Vr_nl - Vr_fl, Vr_fl));
+        this.perVoltReg = math.abs(math.divide((Vr_nl - Vr_fl), Vr_fl));
         console.log('perVoltReg', this.perVoltReg);
     };
 
@@ -348,8 +350,8 @@ function mainObject(){
         r/=math.pow(10,6)
         console.log(r)
         this.Qr= Math.sqrt(Math.pow(r,2)-Math.pow((this.rPower/(3*Math.pow(10,6))+c1/Math.pow(10,6)),2)) - c2/Math.pow(10,6);
-        this.Q = math.tan(math.acos(this.rPF))*this.rPower/(Math.pow(10,6))/3;
-        this.compensation = this.Q-this.Qr;
+        this.Q = -this.rPFsign*math.tan(math.acos(this.rPF))*this.rPower/(Math.pow(10,6))/3;
+        this.compensation = this.Qr-this.Q;
         }
     }
    
