@@ -111,8 +111,8 @@ function placeAnswers(object){
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
     spanArr[0].innerHTML = modelName;
     spanArr[1].innerHTML = d.toLocaleDateString(undefined,options);
-    spanArr[2].innerHTML = object.LPerLength;
-    spanArr[3].innerHTML = object.CPerLength;
+    spanArr[2].innerHTML = object.LPerLength*1000;
+    spanArr[3].innerHTML = object.CPerLength*1000;
     spanArr[4].innerHTML = object.lReactance;
     spanArr[5].innerHTML = object.cReactance;
     spanArr[6].innerHTML = object.Ic
@@ -120,7 +120,7 @@ function placeAnswers(object){
     spanArr[8].innerHTML = object.B
     spanArr[9].innerHTML = object.C
     spanArr[10].innerHTML = object.D
-    spanArr[11].innerHTML = math.abs(object.Vs)
+    spanArr[11].innerHTML = math.abs(object.Vs)/1000
     spanArr[12].innerHTML = math.abs(object.Is)
     spanArr[13].innerHTML = object.perVoltReg*100
     spanArr[14].innerHTML = object.powerLoss/1000000
