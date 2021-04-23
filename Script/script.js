@@ -144,10 +144,12 @@ function placeAnswers(object){
         document.getElementById('onlyForShort').style.display = 'block';
         spanArr[16].innerHTML = object.compensation
         if(object.compensation>0){
-            spanArr[17].innerHTML = "inductive";
+            spanArr[17].innerHTML = "shunt reactor";
+            spanArr[18].innerHTML = 'overvoltage'
         }
         else{
-            spanArr[17].innerHTML = "capacitive"
+            spanArr[17].innerHTML = "shunt capacitive"
+            spanArr[18].innerHTML = 'undervoltage'
         }
     }
 
