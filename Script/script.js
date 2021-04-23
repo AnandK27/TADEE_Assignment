@@ -340,7 +340,7 @@ function mainObject(){
     };
 
     this.chargingCurrCalc = function(){
-        this.Ic = math.abs(this.Is) - math.abs(this.Ir)
+        this.Ic = math.abs(this.Is - this.Ir)
     }
 
     this.compensationCalc = function(){
