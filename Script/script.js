@@ -340,15 +340,7 @@ function mainObject(){
     };
 
     this.chargingCurrCalc = function(){
-        if(this.inputs.model==1){
-            this.Ic = 0;
-        }
-        else if(this.inputs.model==2){
-            this.Ic = math.abs(this.Vs)/(2*this.Xc)
-        }
-        else{
-            this.Ic = math.multiply(this.C,this.Vph);
-        }
+        this.Ic = math.abs(this.Is) - math.abs(this.Ir)
     }
 
     this.compensationCalc = function(){
