@@ -14,7 +14,7 @@
   <script src="https://www.desmos.com/api/v1.6/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
   <title>TADEE Assignment</title>
 </head>
-<body>
+<body id="printObject">
   <div id='top' class="jumbotron" style="padding: 15px; background-image: linear-gradient(to right, rgba(255,0,0,1), rgba(255,0,0,0));"><h1 style='color:snow'>TADEE Assignment</h1></div>
   <div class='container col-md-8 offset-md-2' style = 'padding: 10px; margin-bottom: 10px;'>
   <div>Project by: <br>
@@ -72,7 +72,7 @@
       <label for="strandDia" class='form-label'><strong>6. Diameter of each strand:</strong></label><br>  
       <input type="number" class="form-control" id="strandDia"  min="0" step='any' placeholder="in mm" required> 
     </div> 
-
+    <div class='html2pdf__page-break'></div><br>
     <div class='mb-3'>
       <label for="lineLength" class='form-label'><strong>7. Length of the line:</strong></label><br>  
       <input type="number" class="form-control" id="lineLength"  min="0" step='any' placeholder="in km" required>
@@ -114,6 +114,7 @@
     </div> 
     <button type="submit" class="btn btn-success" id='submit'>Submit</button>
     <button type="reset" class="btn btn-secondary" id='reset'>Reset</button>
+    <button class='btn btn-primary centre' id='printButton' onClick='printPdfinput()'>Print as PDF</button>
   </form>
 </div>
 
