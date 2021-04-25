@@ -359,7 +359,7 @@ function mainObject(){
 
     //Charging Current 
     this.chargingCurrCalc = function(){
-        this.Ic = (this.Is - this.Ir)
+        this.Ic = math.subtract(this.Is,this.Ir)
     }
 
     //Compensation for short model only
