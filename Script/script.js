@@ -9,6 +9,7 @@ var inputs = {
     model: 1
 };
 
+//form reset
 form.addEventListener('reset', function(e){
     disb.childNodes[1].childNodes[1].disabled = false;
     disb.childNodes[3].childNodes[1].disabled = false;
@@ -48,7 +49,7 @@ modelSelection.addEventListener('click', function(e){
     }
 })
 
-
+//Form submission
 $('form.ajax').on('submit',function(){
     var that = $(this);
         data = {};
@@ -89,7 +90,7 @@ $('form.ajax').on('submit',function(){
     return false
 });
 
-
+//Output formatting
 function placeAnswers(object){
     document.getElementById('onlyForShort').style.display = 'none';
     document.getElementById('sendGraph').innerHTML = '';
@@ -157,6 +158,7 @@ function placeAnswers(object){
     location.href = '#answers';
 }
 
+//string separator for the subcond
 function stringSeparator(){
     let w = inputs.subCondDist;
     s_w = w.split(',')
@@ -169,7 +171,7 @@ function stringSeparator(){
     return s;
 }
 
-
+// main class having all the functions,inputs and outputs
 function mainObject(){
     this.inputs = inputs;
     this.radius = parseFloat(this.inputs.radius);
@@ -187,11 +189,13 @@ function mainObject(){
     console.log('rPower', this.rPower);
     console.log('rPF', this.rPF);
 
+    //finding the diameter of subconductors from the number of strands and strand dia
     this.findDia = function(){
         let m = (3+math.sqrt(12*this.inputs.numberOfStrands-3))/6; //number of layers
         this.diameter = (2*m-1)*parseFloat(this.inputs.strandDia)/(1000); //diameter of subconductor
     }
     
+    //finding MGMD
     this.findMGMD = function(){
         if(this.inputs.config){ //symm
             this.mgmd = parseFloat(this.inputs.ABLength);    
@@ -202,6 +206,7 @@ function mainObject(){
         console.log('mgmd', this.mgmd);
     };
 
+    //finding SGMD
     this.findSGMD = function(){
         this.radius = this.diameter/2
         product = 1;
@@ -218,36 +223,43 @@ function mainObject(){
         console.log('csgmd', this.CSgmd);
     };
     
+    //Inductance per length
     this.inductancePerL = function(){
         var logVal = math.log(this.mgmd/this.LSgmd);
         this.LPerLength = 2e-7*(logVal);
         console.log('inductancePerL',this.LPerLength*1000);
     };
 
+    //Capcitance per Length
     this.capcitancePerL = function(){
         var logVal = math.log(this.mgmd/this.CSgmd);
         this.CPerLength = (2*Math.PI*8.854e-12) / logVal;
         console.log('capcitancePerL', this.CPerLength*1000);
     };
 
+    //Capcitance Reactance
     this.capReactance = function(){
         var totCap =  this.CPerLength*this.transLength;
         this.cReactance = 1 / (this.omega*totCap);
         console.log('capReactance', this.cReactance);
     };
 
+
+    //Inductive Reactance
     this.indReactance = function(){
         var totInd = math.chain(this.LPerLength).multiply(this.transLength);
         this.lReactance = (this.omega*totInd);
         console.log('indReactance', this.lReactance);
     };
 
+    //Resistance
     this.TotalResistance = function(){
         var R = parseFloat(this.inputs.rperKm)*this.transLength/1000;
         this.totalResistance = R;
         console.log('TotalResistance', this.totalResistance)
     };
 
+    //ABCD Parameters
     this.abcdParams = function(){
         var R = this.totalResistance;
         var Xc = this.cReactance;
@@ -282,6 +294,8 @@ function mainObject(){
         console.log('D', this.D);
     };
 
+
+    //Sending End Parameters
     this.sendingParams = function(){
         var vr = this.Vr;
         var rpower = this.rPower;
@@ -307,6 +321,7 @@ function mainObject(){
         console.log('Is', this.Is);
     };
 
+    //finding the centres for the circle diagram
     this.sendingAndReceivingCentres = function(){
         this.Cs = []
         this.Cr = []//desmos api
@@ -316,6 +331,7 @@ function mainObject(){
         this.Cr.push((math.abs(this.A)*Math.pow(this.Vph,2)*math.sin(math.atan(this.B.im/this.B.re)))/math.abs(this.B))
     };
 
+    //Voltage Regulation
     this.percVoltReg = function(){
         var magA = math.abs(this.A);
         var magVs = math.abs(this.Vs);
@@ -327,6 +343,7 @@ function mainObject(){
         console.log('perVoltReg', this.perVoltReg);
     };
 
+    //Efficiency 
     this.efficiency = function(){
         this.sendPower = 3*math.abs(this.Vs)*math.abs(this.Is)*math.cos(math.atan(this.Vs.im/this.Vs.re)-math.atan(this.Is.im/this.Is.re));
         console.log('sendPower', this.sendPower);
@@ -335,14 +352,17 @@ function mainObject(){
         console.log('transEff', this.transEff);
     };
 
+    //Power Loss 
     this.powerLossCalc = function(){
         this.powerLoss = (this.sendPower-this.rPower);
     };
 
+    //Charging Current 
     this.chargingCurrCalc = function(){
-        this.Ic = math.abs(this.Is - this.Ir)
+        this.Ic = (this.Is - this.Ir)
     }
 
+    //Compensation for short model only
     this.compensationCalc = function(){
         if(this.inputs.model==1){
         let c1 = (math.abs(this.A)*Math.pow(this.Vph,2)*math.cos(math.atan(this.B.im/this.B.re)))/math.abs(this.B)
@@ -358,6 +378,7 @@ function mainObject(){
    
 };
 
+//Print the Pdf
 function printPdf() {
     ans = document.getElementById('answers');
     html2pdf(ans, { 
