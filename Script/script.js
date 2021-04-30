@@ -279,7 +279,7 @@ function mainObject(){
         else if (this.inputs.model == 2){
             this.A = math.add(1, math.multiply(0.5, math.multiply(Ym, Zm)));
             this.B = Zm;
-            this.C = math.multiply(Ym, math.multiply(0.25, math.multiply(Zm, (math.multiply(Ym, Ym)))));
+            this.C = math.add(Ym, math.multiply(0.25, math.multiply(Zm, (math.multiply(Ym, Ym)))));
             this.D = this.A;
         }
         else if (this.inputs.model == 3){
